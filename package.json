@@ -1,0 +1,19 @@
+{
+  "name": "date-link-remover",
+  "version": "1.0.0",
+  "description": "Wikipedia script to easily remove links off dates",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nacaru-w/date-link-remover.git"
+  },
+  "author": "nacaru",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/nacaru-w/date-link-remover/issues"
+  },
+  "homepage": "https://github.com/nacaru-w/date-link-remover#readme"
+}
