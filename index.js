@@ -49,7 +49,7 @@ const initializeScript = () => {
                             (revision) => {
                                 return {
                                     text: revision.content.replace(sanitizerRegex, '$1'),
-                                    summary: 'Eliminando enlaces según [[WP:ENLACESFECHAS]]',
+                                    summary: 'Eliminando enlaces según [[WP:ENLACESFECHAS]] mediante [[Usuario:Nacaru/date-link-remover.js|script]]',
                                     minor: false
                                 }
                             }
