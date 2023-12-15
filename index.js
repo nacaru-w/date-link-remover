@@ -37,6 +37,7 @@ const initializeScript = () => {
         getContent(page).then((content) => {
             if (regex.test(content)) {
                 console.log("found a date with brackets");
+                // This will add the button to remove the square brackets from dates
                 const portletLink = mw.util.addPortletLink('p-views', '#', 'WP:ENLACESFECHAS', 'Se han detectado enlaces en fechas, clic aquí para eliminarlos', 'Remove links from dates');
                 if (portletLink) {
                     portletLink.addEventListener("click", (e) => {
