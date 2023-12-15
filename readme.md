@@ -1,6 +1,6 @@
 Project created to easily apply the [[[WP:ENLACESFECHAS]]](https://es.wikipedia.org/wiki/Wikipedia:Manual_de_estilo#Enlaces_internos) rule on the Spanish Wikipedia.
 
-The script is be transcluded on [this page](https://es.wikipedia.org/wiki/Usuario:Nacaru/date-link-remover.js).
+The script is then transcluded on [this page](https://es.wikipedia.org/wiki/Usuario:Nacaru/date-link-remover.js).
 
 To be able to use it, you must paste the following code in your common.js page:
 
