@@ -48,7 +48,7 @@ const initializeScript = () => {
                             (revision) => {
                                 return {
                                     text: revision.content.replace(sanitizerRegex, '$1'),
-                                    summary: 'Eliminando enlaces según [[WP:FECHASENLACES]]',
+                                    summary: 'Eliminando enlaces según [[WP:ENLACESFECHAS]]',
                                     minor: false
                                 }
                             }
@@ -57,7 +57,7 @@ const initializeScript = () => {
                             setTimeout(() => {
                                 console.log('Reloading page');
                                 location.reload();
-                            }, 1000);
+                            }, 500);
                             // Catch any execution errors
                         }).catch((error) => {
                             alert(`Se ha producido un error: ${error.message}`);
