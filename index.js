@@ -38,7 +38,7 @@ const initializeScript = () => {
             if (regex.test(content)) {
                 console.log("found a date with brackets");
                 // This will add the button to remove the square brackets from dates if it finds such occurence in an article
-                const portletLink = mw.util.addPortletLink('p-views', '#', 'WP:ENLACESFECHAS', 'Se han detectado enlaces en fechas, clic aquí para eliminarlos', 'Remove links from dates');
+                const portletLink = mw.util.addPortletLink('p-views', '#', 'WP:ENLACESFECHAS', 'enlaces-fechas', 'Se han detectado enlaces en fechas, clic aquí para eliminarlos');
                 if (portletLink) {
                     portletLink.addEventListener("click", (e) => {
                         const sanitizerRegex = /\[\[(((?:\d{1,2} de )?(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre))|\d{1,4}(?:\s?a\.(?:\s|&nbsp;)?C\.|\s?d\.(?:\s|&nbsp;)?C\.)?)\]\]/ig;
@@ -62,7 +62,7 @@ const initializeScript = () => {
                         }).catch((error) => {
                             alert(`Se ha producido un error: ${error}`);
                             setTimeout(() => {
-                                location.reload()
+                                location.reload();
                             }, 3000);
                         })
                     })
