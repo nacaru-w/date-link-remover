@@ -16,14 +16,14 @@ function getContent(pageName) {
         rvslots: 'main',
         formatversion: '2',
         format: 'json'
-    }
+    };
 
     let apiPromise = new mw.Api().get(params).then(
         ((data) => {
             return data.query.pages[0].revisions[0].slots?.main?.content
         })
     );
-    return apiPromise
+    return apiPromise;
 }
 
 // Main script function
@@ -41,7 +41,6 @@ const initializeScript = () => {
                 const portletLink = mw.util.addPortletLink('p-views', '#', 'WP:ENLACESFECHAS', 'Se han detectado enlaces en fechas, clic aquí para eliminarlos', 'Remove links from dates');
                 if (portletLink) {
                     portletLink.addEventListener("click", (e) => {
-                        console.log('testing')
                         const sanitizerRegex = /\[\[(((?:\d{1,2} de )?(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre))|\d{1,4}(?:\s?a\.(?:\s|&nbsp;)?C\.|\s?d\.(?:\s|&nbsp;)?C\.)?)\]\]/ig;
                         // Call mw API to carry out the edit 
                         new mw.Api().edit(
