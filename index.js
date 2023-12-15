@@ -37,7 +37,7 @@ const initializeScript = () => {
         getContent(page).then((content) => {
             if (regex.test(content)) {
                 console.log("found a date with brackets");
-                const portletLink = mw.util.addPortletLink('p-views', '#', 'WP:FECHASENLACES', 'Se han detectado enlaces en fechas, clic aquí para eliminarlos', 'Remove links from dates');
+                const portletLink = mw.util.addPortletLink('p-views', '#', 'WP:ENLACESFECHAS', 'Se han detectado enlaces en fechas, clic aquí para eliminarlos', 'Remove links from dates');
                 if (portletLink) {
                     portletLink.addEventListener("click", (e) => {
                         console.log('testing')
