@@ -33,16 +33,16 @@ const initializeScript = () => {
     // Same applies to the current namespace
     const namespace = mw.config.get('wgNamespaceNumber');
     if (document.readyState == 'complete' && (namespace == 0 || namespace == 104 || namespace == 2)) {
-        const regex = /\[\[((?:\d{1,2} de )?(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|\d{1,4})\]\]/i;
+        const regex = /\[\[((?:\d{1,2} de )?(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|\d{1,4}(?:\s?a\.(?:\s|&nbsp;)?C\.|\s?d\.(?:\s|&nbsp;)?C\.)?)\]\]/i;
         getContent(page).then((content) => {
             if (regex.test(content)) {
                 console.log("found a date with brackets");
-                // This will add the button to remove the square brackets from dates
+                // This will add the button to remove the square brackets from dates if it finds such occurence in an article
                 const portletLink = mw.util.addPortletLink('p-views', '#', 'WP:ENLACESFECHAS', 'Se han detectado enlaces en fechas, clic aquí para eliminarlos', 'Remove links from dates');
                 if (portletLink) {
                     portletLink.addEventListener("click", (e) => {
                         console.log('testing')
-                        const sanitizerRegex = /\[\[(((?:\d{1,2} de )?(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre))|\d{1,4})\]\]/ig;
+                        const sanitizerRegex = /\[\[(((?:\d{1,2} de )?(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre))|\d{1,4}(?:\s?a\.(?:\s|&nbsp;)?C\.|\s?d\.(?:\s|&nbsp;)?C\.)?)\]\]/ig;
                         // Call mw API to carry out the edit 
                         new mw.Api().edit(
                             page,
@@ -61,7 +61,7 @@ const initializeScript = () => {
                             }, 500);
                             // Catch any execution errors
                         }).catch((error) => {
-                            alert(`Se ha producido un error: ${error.message}`);
+                            alert(`Se ha producido un error: ${error}`);
                             setTimeout(() => {
                                 location.reload()
                             }, 3000);
