@@ -33,7 +33,7 @@ const initializeScript = () => {
     // Same applies to the current namespace
     const namespace = mw.config.get('wgNamespaceNumber');
     if (document.readyState == 'complete' && (namespace == 0 || namespace == 104 || namespace == 2)) {
-        const regex = /\[\[((?:\d{1,2} de )?(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|\d{1,4}(?:\s?a\.(?:\s|&nbsp;)?C\.|\s?d\.(?:\s|&nbsp;)?C\.)?)\]\]/i;
+        const regex = /\[\[((?:\d{1,2} de )?(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:\d{1,4}\s?(?:a|d)\.C\.\|)?\d{1,4}(?:(?:\s|&nbsp;)?(?:a|d)\.(?:\s|&nbsp;)?C\.)?)\]\]/i;
         getContent(page).then((content) => {
             if (regex.test(content)) {
                 console.log("found a date with brackets");
@@ -41,7 +41,7 @@ const initializeScript = () => {
                 const portletLink = mw.util.addPortletLink('p-views', '#', 'WP:ENLACESFECHAS', 'enlaces-fechas', 'Se han detectado enlaces en fechas, clic aquí para eliminarlos');
                 if (portletLink) {
                     portletLink.addEventListener("click", (e) => {
-                        const sanitizerRegex = /\[\[(((?:\d{1,2} de )?(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre))|\d{1,4}(?:\s?a\.(?:\s|&nbsp;)?C\.|\s?d\.(?:\s|&nbsp;)?C\.)?)\]\]/ig;
+                        const sanitizerRegex = /\[\[(((?:\d{1,2} de )?(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre))|(?:\d{1,4}\s?(?:a|d)\.C\.\|)?\d{1,4}(?:(?:\s|&nbsp;)?(?:a|d)\.(?:\s|&nbsp;)?C\.)?)\]\]/ig;
                         // Call mw API to carry out the edit 
                         new mw.Api().edit(
                             page,
