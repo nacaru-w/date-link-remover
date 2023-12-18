@@ -36,7 +36,7 @@ const initializeScript = () => {
     const page = mw.config.get('wgPageName');
     // Same applies to the current namespace
     console.log(document.readyState);
-    const regex = /\[\[((\d{1,2} de )?(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(\d{1,4}|siglo(\s|&nbsp;)*\w+)((\s|&nbsp;)*(a|d)\.(\s|&nbsp;)*C\.)?)(\|[^\]]*)*\]\]/i;
+    const regex = /\[\[((\d{1,2} de )?(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(años\s)?(\d{1,4}|siglo(\s|&nbsp;)*\w+)((\s|&nbsp;)*(a|d)\.(\s|&nbsp;)*C\.)?)(\|[^\]]*)*\]\]/i;
     getContent(page).then((content) => {
         if (regex.test(content)) {
             console.log("found a date with brackets");
