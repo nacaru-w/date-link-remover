@@ -4,7 +4,7 @@
 const loadDependencies = (callback) => {
     mw.loader.using('mediawiki.api', 'mediawiki.util', 'mediawiki.user');
     if (document.readyState !== 'loading') {
-        callback;
+        callback();
     } else {
         document.addEventListener('DOMContentLoaded', callback);
     }
@@ -77,7 +77,7 @@ const initializeScript = () => {
 (async () => {
     const namespace = await mw.config.get('wgNamespaceNumber');
     if (namespace == 0 || namespace == 104 || namespace == 2) {
-        loadDependencies(initializeScript());
+        loadDependencies(initializeScript);
     }
 })();
 
