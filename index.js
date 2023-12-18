@@ -32,7 +32,8 @@ const initializeScript = () => {
     const page = mw.config.get('wgPageName');
     // Same applies to the current namespace
     const namespace = mw.config.get('wgNamespaceNumber');
-    addEventListener("readystatechange", () => {
+    window.addEventListener("load", () => {
+        console.log("page loaded so loading date link remover");
         if (namespace == 0 || namespace == 104 || namespace == 2) {
             const regex = /\[\[((\d{1,2} de )?(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(\d{1,4}|siglo(\s|&nbsp;)*\w+)((\s|&nbsp;)*(a|d)\.(\s|&nbsp;)*C\.)?)(\|[^\]]*)*\]\]/i;
             getContent(page).then((content) => {
