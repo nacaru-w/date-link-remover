@@ -30,7 +30,12 @@ function getContent(pageName) {
     return apiPromise;
 }
 
+function escapeRegExp(str) {
+  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+}
+
 function makeRegex(expression) {
+    expression = escapeRegExp(expression);
     return new RegExp(expression, "i");
 }
 
