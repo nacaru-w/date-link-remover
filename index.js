@@ -30,27 +30,59 @@ function getContent(pageName) {
     return apiPromise;
 }
 
+function makeRegex(expression) {
+    return new RegExp(expression), "i");
+}
+
+function makeRegexGlobal(expression) {
+    return new RegExp(expression, "gi");
+}
+
+// Regexes constants
+const dateLink = "\[\[((?:\d{1,2} de )?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:años\s)?(?:\d{1,4}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)\]\]";
+const pipeDateLink = dateLink.replace("\]\]", "(\|[^\]]*)*\]\]");
+const centuries = "(\{\{siglo[^\}]+)1\s*(\}\})";
+
+const regex = makeRegex(dateLink);
+const pipeRegex = makeRegex(pipeDateLink);
+const centuriesRegex = makeRegex(centuries);
+
+function replace(revision) {
+    let newText;
+    if regex.test(revision) {
+        regex = makeRegexGlobal(regex);
+        newText = revision.content.replace(regex, "$1");
+    }
+    if pipeRegex.test(revision) {
+        pipeRegex = makeRegexGlobal(pipeRegex);
+        newText = revision.content.replace(pipeRegex, "$2");
+    }
+    if centuriesRegex.test(revision) {
+        centuriesRegex = makeRegexGlobal(centuriesRegex);
+        newText = revision.content.replace(centuriesRegex, "$1$2");
+    }
+    return newText;
+}
+
 // Main script function
 const initializeScript = () => {
     // Find the name of the current page and assign it to a variable
     const page = mw.config.get('wgPageName');
     // Same applies to the current namespace
     console.log(document.readyState);
-    const regex = /\[\[((\d{1,2} de )?(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(años\s)?(\d{1,4}|siglo(\s|&nbsp;)*\w+)((\s|&nbsp;)*(a|d)\.(\s|&nbsp;)*C\.)?)(\|[^\]]*)*\]\]/i;
     getContent(page).then((content) => {
-        if (regex.test(content)) {
+        if (regex.test(content)) || (pipeRegex.test(content)) || (centuriesRegex.test(content)) {
             console.log("found a date with brackets");
             // This will add the button to remove the square brackets from dates if it finds such occurence in an article
             const portletLink = mw.util.addPortletLink('p-views', '#', 'WP:ENLACESFECHAS', 'enlaces-fechas', 'Se han detectado enlaces en fechas, clic aquí para eliminarlos');
             if (portletLink) {
                 portletLink.addEventListener("click", () => {
-                    const sanitizerRegex = new RegExp(regex, "gi");
                     // Call mw API to carry out the edit 
                     new mw.Api().edit(
                         page,
                         (revision) => {
                             return {
-                                text: revision.content.replace(sanitizerRegex, '$1'),
+                                text: replace(revision),
                                 summary: 'Eliminando enlaces según [[WP:ENLACESFECHAS]] mediante [[Usuario:Nacaru/date-link-remover.js|script]]',
                                 minor: false
                             }
