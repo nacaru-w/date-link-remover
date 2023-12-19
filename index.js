@@ -30,12 +30,7 @@ function getContent(pageName) {
     return apiPromise;
 }
 
-function escapeRegExp(str) {
-  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-}
-
 function makeRegex(expression) {
-    expression = escapeRegExp(expression);
     return new RegExp(expression, "i");
 }
 
@@ -44,13 +39,9 @@ function makeRegexGlobal(expression) {
 }
 
 // Regexes constants
-const dateLink = "\[\[((?:\d{1,2} de )?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:años\s)?(?:\d{1,4}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)\]\]";
-const pipeDateLink = dateLink.replace("\]\]", "(\|[^\]]*)*\]\]");
-const centuries = "(\{\{siglo[^\}]+)1\s*(\}\})";
-
-const regex = makeRegex(dateLink);
-const pipeRegex = makeRegex(pipeDateLink);
-const centuriesRegex = makeRegex(centuries);
+const regex = /\[\[((?:\d{1,2} de )?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:años\s)?(?:\d{1,4}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)\]\]/i;
+const pipeRegex = /\[\[((?:\d{1,2} de )?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:años\s)?(?:\d{1,4}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)(\|[^\]]*)*\]\]/i;
+const centuriesRegex = /(\{\{siglo[^\}]+)1\s*(\}\})/i;
 
 function replace(revision) {
     let newText;
