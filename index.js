@@ -40,22 +40,22 @@ function makeRegexGlobal(expression) {
 
 // Regexes constants
 let regex = /\[\[((?:\d{1,2} de )?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:años\s)?(?:\d{1,4}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)\]\]/i;
-let pipeRegex = /\[\[((?:\d{1,2} de )?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:años\s)?(?:\d{1,4}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)(\|[^\]]*)*\]\]/i;
+let pipeRegex = /\[\[((?:\d{1,2} de )?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:años\s)?(?:\d{1,4}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)(\|[^\]]*)\]\]/i;
 let centuriesRegex = /(\{\{siglo[^\}]+)1\s*(\}\})/i;
 
 function textReplacer(articleText) {
-    let newText;
+    let newText = articleText;
     if (regex.test(articleText)) {
         regex = makeRegexGlobal(regex);
-        newText = articleText.replace(regex, "$1");
+        newText = newText.replace(regex, "$1");
     }
     if (pipeRegex.test(articleText)) {
         pipeRegex = makeRegexGlobal(pipeRegex);
-        newText = articleText.replace(pipeRegex, "$2");
+        newText = newText.replace(pipeRegex, "$2");
     }
     if (centuriesRegex.test(articleText)) {
         centuriesRegex = makeRegexGlobal(centuriesRegex);
-        newText = articleText.replace(centuriesRegex, "$1$2");
+        newText = newText.replace(centuriesRegex, "$1$2");
     }
     return newText;
 }
