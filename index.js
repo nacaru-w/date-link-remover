@@ -51,15 +51,15 @@ function replace(revision) {
     let newText;
     if regex.test(revision) {
         regex = makeRegexGlobal(regex);
-        newText = revision.content.replace(regex, $1);
+        newText = revision.content.replace(regex, "$1");
     }
     if pipeRegex.test(revision) {
         pipeRegex = makeRegexGlobal(pipeRegex);
-        newText = revision.content.replace(pipeRegex, $2);
+        newText = revision.content.replace(pipeRegex, "$2");
     }
     if centuriesRegex.test(revision) {
         centuriesRegex = makeRegexGlobal(centuriesRegex);
-        newText = revision.content.replace(centuriesRegex);
+        newText = revision.content.replace(centuriesRegex, "$1$2");
     }
     return newText;
 }
