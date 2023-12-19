@@ -39,9 +39,9 @@ function makeRegexGlobal(expression) {
 }
 
 // Regexes constants
-const regex = /\[\[((?:\d{1,2} de )?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:años\s)?(?:\d{1,4}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)\]\]/i;
-const pipeRegex = /\[\[((?:\d{1,2} de )?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:años\s)?(?:\d{1,4}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)(\|[^\]]*)*\]\]/i;
-const centuriesRegex = /(\{\{siglo[^\}]+)1\s*(\}\})/i;
+let regex = /\[\[((?:\d{1,2} de )?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:años\s)?(?:\d{1,4}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)\]\]/i;
+let pipeRegex = /\[\[((?:\d{1,2} de )?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:años\s)?(?:\d{1,4}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)(\|[^\]]*)*\]\]/i;
+let centuriesRegex = /(\{\{siglo[^\}]+)1\s*(\}\})/i;
 
 function textReplacer(articleText) {
     let newText;
