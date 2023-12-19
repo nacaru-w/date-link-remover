@@ -43,19 +43,19 @@ const regex = /\[\[((?:\d{1,2} de )?(?:enero|febrero|marzo|abril|mayo|junio|juli
 const pipeRegex = /\[\[((?:\d{1,2} de )?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:años\s)?(?:\d{1,4}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)(\|[^\]]*)*\]\]/i;
 const centuriesRegex = /(\{\{siglo[^\}]+)1\s*(\}\})/i;
 
-function replace(revision) {
+function textReplacer(articleText) {
     let newText;
-    if (regex.test(revision)) {
+    if (regex.test(articleText)) {
         regex = makeRegexGlobal(regex);
-        newText = revision.content.replace(regex, "$1");
+        newText = articleText.replace(regex, "$1");
     }
-    if (pipeRegex.test(revision)) {
+    if (pipeRegex.test(articleText)) {
         pipeRegex = makeRegexGlobal(pipeRegex);
-        newText = revision.content.replace(pipeRegex, "$2");
+        newText = articleText.replace(pipeRegex, "$2");
     }
-    if (centuriesRegex.test(revision)) {
+    if (centuriesRegex.test(articleText)) {
         centuriesRegex = makeRegexGlobal(centuriesRegex);
-        newText = revision.content.replace(centuriesRegex, "$1$2");
+        newText = articleText.replace(centuriesRegex, "$1$2");
     }
     return newText;
 }
@@ -78,7 +78,7 @@ const initializeScript = () => {
                         page,
                         (revision) => {
                             return {
-                                text: replace(revision),
+                                text: textReplacer(revision.content),
                                 summary: 'Eliminando enlaces según [[WP:ENLACESFECHAS]] mediante [[Usuario:Nacaru/date-link-remover.js|script]]',
                                 minor: false
                             }
