@@ -30,10 +30,6 @@ function getContent(pageName) {
     return apiPromise;
 }
 
-function makeRegex(expression) {
-    return new RegExp(expression, "i");
-}
-
 function makeRegexGlobal(expression) {
     return new RegExp(expression, "gi");
 }
@@ -41,21 +37,21 @@ function makeRegexGlobal(expression) {
 // Regexes constants
 let regex = /\[\[((?:\d{1,2} de )?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años|década de)\s)?(?:\d{1,4}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)\]\]/i;
 let pipeRegex = /\[\[((?:\d{1,2} de )?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años|década de)\s)?(?:\d{1,4}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)(?:\|([^\]]*))\]\]/i;
-let centuriesRegex = /(\{\{(?:siglo|(?:Julgreg)?fecha)[^\}]+)(?:\|1|\|Link\s*=\s*(?:\"true\"|(?:s[ií]|pt)))\s*(\}\})/i;
+let templateRegex = /(\{\{(?:siglo|(?:Julgreg)?fecha)[^\}]+)(?:\|1|\|Link\s*=\s*(?:\"true\"|(?:s[ií]|pt)))\s*(\}\})/i;
 
-function textReplacer(articleText) {
+function textReplacer(articleText, applyRegex, applyPipeRegex, applyTemplateRegex) {
     let newText = articleText;
-    if (regex.test(articleText)) {
+    if (applyRegex) {
         regex = makeRegexGlobal(regex);
         newText = newText.replace(regex, "$1");
     }
-    if (pipeRegex.test(articleText)) {
+    if (applyPipeRegex) {
         pipeRegex = makeRegexGlobal(pipeRegex);
         newText = newText.replace(pipeRegex, "$2");
     }
-    if (centuriesRegex.test(articleText)) {
-        centuriesRegex = makeRegexGlobal(centuriesRegex);
-        newText = newText.replace(centuriesRegex, "$1$2");
+    if (applyTemplateRegex) {
+        templateRegex = makeRegexGlobal(templateRegex);
+        newText = newText.replace(templateRegex, "$1$2");
     }
     return newText;
 }
@@ -65,12 +61,14 @@ const initializeScript = () => {
     // Find the name of the current page and assign it to a variable
     const page = mw.config.get('wgPageName');
     // Same applies to the current namespace
-    console.log(document.readyState);
     getContent(page).then((content) => {
-        if (regex.test(content) || pipeRegex.test(content) || centuriesRegex.test(content)) {
+        if (regex.test(content) || pipeRegex.test(content) || templateRegex.test(content)) {
             console.log("found a date with brackets");
             // This will add the button to remove the square brackets from dates if it finds such occurence in an article
             const portletLink = mw.util.addPortletLink('p-views', '#', 'WP:ENLACESFECHAS', 'enlaces-fechas', 'Se han detectado enlaces en fechas, clic aquí para eliminarlos');
+            const useRegex = regex.test(content);
+            const usePipeRegex = pipeRegex.test(content);
+            const useTemplateRegex = templateRegex.test(content);
             if (portletLink) {
                 portletLink.addEventListener("click", () => {
                     // Call mw API to carry out the edit 
@@ -78,7 +76,7 @@ const initializeScript = () => {
                         page,
                         (revision) => {
                             return {
-                                text: textReplacer(revision.content),
+                                text: textReplacer(revision.content, useRegex, usePipeRegex, useTemplateRegex),
                                 summary: 'Eliminando enlaces según [[WP:ENLACESFECHAS]] mediante [[Usuario:Nacaru/date-link-remover.js|script]]',
                                 minor: false
                             }
@@ -86,15 +84,11 @@ const initializeScript = () => {
                         // Reload the page
                     ).then(() => {
                         setTimeout(() => {
-                            console.log('Reloading page');
                             location.reload();
                         }, 500);
                         // Catch any execution errors
                     }).catch((error) => {
                         alert(`Se ha producido un error: ${error}`);
-                        setTimeout(() => {
-                            location.reload();
-                        }, 3000);
                     })
                 })
             }
