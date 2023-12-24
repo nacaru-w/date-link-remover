@@ -66,6 +66,7 @@ const initializeScript = () => {
             console.log("found a date with brackets");
             // This will add the button to remove the square brackets from dates if it finds such occurence in an article
             const portletLink = mw.util.addPortletLink('p-views', '#', 'WP:ENLACESFECHAS', 'enlaces-fechas', 'Se han detectado enlaces en fechas, clic aquí para eliminarlos');
+            // Let's store the evaluations in constants while the user takes their time to click the button
             const useRegex = regex.test(content);
             const usePipeRegex = pipeRegex.test(content);
             const useTemplateRegex = templateRegex.test(content);
