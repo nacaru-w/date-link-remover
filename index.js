@@ -60,7 +60,6 @@ function textReplacer(articleText, applyRegex, applyPipeRegex, applyTemplateRege
 const initializeScript = () => {
     // Find the name of the current page and assign it to a variable
     const page = mw.config.get('wgPageName');
-    // Same applies to the current namespace
     getContent(page).then((content) => {
         if (regex.test(content) || pipeRegex.test(content) || templateRegex.test(content)) {
             console.log("found a date with brackets");
@@ -98,6 +97,7 @@ const initializeScript = () => {
 }
 
 (async () => {
+    // The script shouldn't load if the user is not in the right namespace
     const namespace = await mw.config.get('wgNamespaceNumber');
     if (namespace == 0 || namespace == 104 || namespace == 2) {
         loadDependencies(initializeScript);
