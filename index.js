@@ -104,6 +104,7 @@ const dateLinkRemover = (() => {
             loadDependencies(initializeScript);
         }
     })();
+
 })();
 
 //</nowiki>
