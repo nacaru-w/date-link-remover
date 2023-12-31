@@ -162,7 +162,7 @@ const dateLinkeRemoverControlPanel = (() => {
                         const useRegex = regex.test(content);
                         const usePipeRegex = pipeRegex.test(content);
                         const useTemplateRegex = templateRegex.test(content);
-                        new mw.Api().edit(
+                        await new mw.Api().edit(
                             article,
                             (revision) => {
                                 return {
