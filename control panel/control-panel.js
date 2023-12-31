@@ -168,10 +168,13 @@ const dateLinkeRemoverControlPanel = (() => {
                                 return {
                                     text: textReplacer(revision.content, useRegex, usePipeRegex, useTemplateRegex),
                                     summary: 'Eliminando enlaces según [[WP:ENLACESFECHAS]]',
-                                    minor: false
+                                    minor: false,
+                                    token: 'crsf'
                                 }
                             }
-                        )
+                        ).catch((error) => {
+                            console.log(error);
+                        })
                         const htmlElement = document.getElementById(article);
                         htmlElement.style.color = 'darkgreen';
 
