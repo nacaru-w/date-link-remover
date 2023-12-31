@@ -73,23 +73,23 @@ const dateLinkeRemoverControlPanel = (() => {
     }
 
     // Regexes variables
-    let regex = /\[\[((?:\d{1,2}º? de )?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década de)\s)?(?:[1-9]\d{0,3}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)\]\]/i;
-    let pipeRegex = /\[\[((?:\d{1,2}º? de )?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década de)\s)?(?:[1-9]\d{0,3}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)(?:\|([^\]]*))\]\]/i;
-    let templateRegex = /(\{\{(?:siglo|(?:Julgreg)?fecha)[^\}]+)(?:\|1|\|Link\s*=\s*(?:\"true\"|(?:s[ií]|pt)))\s*(\}\})/i;
+    const regex = /\[\[((?:\d{1,2}º? de )?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década de)\s)?(?:[1-9]\d{0,3}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)\]\]/i;
+    const pipeRegex = /\[\[((?:\d{1,2}º? de )?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década de)\s)?(?:[1-9]\d{0,3}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)(?:\|([^\]]*))\]\]/i;
+    const templateRegex = /(\{\{(?:siglo|(?:Julgreg)?fecha)[^\}]+)(?:\|1|\|Link\s*=\s*(?:\"true\"|(?:s[ií]|pt)))\s*(\}\})/i;
 
     function textReplacer(articleText, applyRegex, applyPipeRegex, applyTemplateRegex) {
         let newText = articleText;
         if (applyRegex) {
-            regex = makeRegexGlobal(regex);
-            newText = newText.replace(regex, "$1");
+            const newRegex = makeRegexGlobal(regex);
+            newText = newText.replace(newRegex, "$1");
         }
         if (applyPipeRegex) {
-            pipeRegex = makeRegexGlobal(pipeRegex);
-            newText = newText.replace(pipeRegex, "$2");
+            const newPipeRegex = makeRegexGlobal(pipeRegex);
+            newText = newText.replace(newPipeRegex, "$2");
         }
         if (applyTemplateRegex) {
-            templateRegex = makeRegexGlobal(templateRegex);
-            newText = newText.replace(templateRegex, "$1$2");
+            const newTemplateRegex = makeRegexGlobal(templateRegex);
+            newText = newText.replace(newTemplateRegex, "$1$2");
         }
         return newText;
     }
@@ -133,7 +133,6 @@ const dateLinkeRemoverControlPanel = (() => {
         genArticleList().then((result) => {
             articleList = result;
             for (let article of articleList) {
-                console.log(article);
                 let spanElement = document.createElement("span");
                 spanElement.id = article
                 spanElement.textContent = article;
@@ -157,11 +156,11 @@ const dateLinkeRemoverControlPanel = (() => {
         }).then(() => {
             initializeButton.addEventListener("click", async () => {
                 for (let article of articleList) {
-                    let content = await getContent(article);
-                    if (regex.test(content) || pipeRegex.test(content) || templateRegex.test(content)) {
-                        const useRegex = regex.test(content);
-                        const usePipeRegex = pipeRegex.test(content);
-                        const useTemplateRegex = templateRegex.test(content);
+                    const content = await getContent(article);
+                    const useRegex = regex.test(content);
+                    const usePipeRegex = pipeRegex.test(content);
+                    const useTemplateRegex = templateRegex.test(content);
+                    if (useRegex || usePipeRegex || useTemplateRegex) {
                         await new mw.Api().edit(
                             article,
                             (revision) => {
@@ -172,15 +171,18 @@ const dateLinkeRemoverControlPanel = (() => {
                                     token: 'crsf'
                                 }
                             }
-                        ).catch((error) => {
+                        ).then(() => {
+                            const htmlElement = document.getElementById(article);
+                            htmlElement.style.color = 'darkgreen';
+                        }).catch((error) => {
                             console.log(error);
                         })
-                        const htmlElement = document.getElementById(article);
-                        htmlElement.style.color = 'darkgreen';
 
                         await wait(12000);
 
-                    } else {
+                    }
+
+                    if (!useRegex && !usePipeRegex && !useTemplateRegex) {
                         const htmlElement = document.getElementById(article);
                         htmlElement.style.color = 'darkgray';
                     }
