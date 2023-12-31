@@ -62,14 +62,15 @@ const dateLinkRemover = (() => {
         // Find the name of the current page and assign it to a variable
         const page = mw.config.get('wgPageName');
         getContent(page).then((content) => {
-            if (regex.test(content) || pipeRegex.test(content) || templateRegex.test(content)) {
-                console.log("found a date with brackets");
+            const useRegex = regex.test(content);
+            const usePipeRegex = pipeRegex.test(content);
+            const useTemplateRegex = templateRegex.test(content);
+            if (useRegex || usePipeRegex || useTemplateRegex) {
+                console.log("found at least one date with brackets");
                 // This will add the button to remove the square brackets from dates if it finds such occurence in an article
                 const portletLink = mw.util.addPortletLink('p-views', '#', 'WP:ENLACESFECHAS', 'enlaces-fechas', 'Se han detectado enlaces en fechas, clic aquí para eliminarlos');
                 // Let's store the evaluations in constants while the user takes their time to click the button
-                const useRegex = regex.test(content);
-                const usePipeRegex = pipeRegex.test(content);
-                const useTemplateRegex = templateRegex.test(content);
+
                 if (portletLink) {
                     portletLink.addEventListener("click", () => {
                         // Call mw API to carry out the edit 
