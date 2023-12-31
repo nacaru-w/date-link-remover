@@ -62,6 +62,12 @@ const dateLinkeRemoverControlPanel = (() => {
         return apiPromise
     }
 
+    function wait(ms) {
+        return new Promise(resolve => {
+            setTimeout(resolve, ms);
+        });
+    }
+
     function makeRegexGlobal(expression) {
         return new RegExp(expression, "gi");
     }
@@ -149,33 +155,32 @@ const dateLinkeRemoverControlPanel = (() => {
 
             }
         }).then(() => {
-            initializeButton.addEventListener("click", () => {
+            initializeButton.addEventListener("click", async () => {
                 for (let article of articleList) {
-                    getContent(article).then((content) => {
-                        if (regex.test(content) || pipeRegex.test(content) || templateRegex.test(content)) {
-                            const useRegex = regex.test(content);
-                            const usePipeRegex = pipeRegex.test(content);
-                            const useTemplateRegex = templateRegex.test(content);
-                            setTimeout(async () => {
-                                await new mw.Api().edit(
-                                    article,
-                                    (revision) => {
-                                        return {
-                                            text: textReplacer(revision.content, useRegex, usePipeRegex, useTemplateRegex),
-                                            summary: 'Eliminando enlaces según [[WP:ENLACESFECHAS]]',
-                                            minor: false
-                                        }
-                                    }
-                                )
-                            }, 12000);
-                            const htmlElement = document.getElementById(article);
-                            htmlElement.style.color = 'darkgreen';
-                        } else {
-                            const htmlElement = document.getElementById(article);
-                            htmlElement.style.color = 'darkgray';
-                        }
-                    })
+                    let content = await getContent(article);
+                    if (regex.test(content) || pipeRegex.test(content) || templateRegex.test(content)) {
+                        const useRegex = regex.test(content);
+                        const usePipeRegex = pipeRegex.test(content);
+                        const useTemplateRegex = templateRegex.test(content);
+                        new mw.Api().edit(
+                            article,
+                            (revision) => {
+                                return {
+                                    text: textReplacer(revision.content, useRegex, usePipeRegex, useTemplateRegex),
+                                    summary: 'Eliminando enlaces según [[WP:ENLACESFECHAS]]',
+                                    minor: false
+                                }
+                            }
+                        )
+                        const htmlElement = document.getElementById(article);
+                        htmlElement.style.color = 'darkgreen';
 
+                        await wait(12000);
+
+                    } else {
+                        const htmlElement = document.getElementById(article);
+                        htmlElement.style.color = 'darkgray';
+                    }
                 }
                 console.log("terminado");
             })
