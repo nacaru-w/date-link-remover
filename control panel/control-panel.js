@@ -168,8 +168,7 @@ const dateLinkeRemoverControlPanel = (() => {
                     }
                 }
                 alert("Tarea finalizada");
-                submitButton.removeAttribute('disabled');
-                initializeButton.removeAttribute('disabled');
+                cleanupButton.removeAttribute('disabled');
             })
         }
         if (!document.getElementById('cleanupButton')) {
@@ -183,6 +182,7 @@ const dateLinkeRemoverControlPanel = (() => {
                 articleList = [];
                 box.innerHTML = '';
                 cleanupButton.setAttribute('disabled', '');
+                initializeButton.setAttribute('disabled', '');
                 submitButton.removeAttribute('disabled');
             })
         }
@@ -190,6 +190,7 @@ const dateLinkeRemoverControlPanel = (() => {
         genArticleList().then((result) => {
             articleList = result;
             cleanupButton.removeAttribute('disabled');
+            initializeButton.removeAttribute('disabled');
             for (let article of articleList) {
                 let spanElement = document.createElement("span");
                 spanElement.id = article
