@@ -1,4 +1,5 @@
 //<nowiki>
+let articleList;
 
 const dateLinkeRemoverControlPanel = (() => {
     console.log('Loading control panel');
@@ -96,8 +97,8 @@ const dateLinkeRemoverControlPanel = (() => {
 
     function loadControlPanel() {
         console.log('loading window');
-        let Window = new Morebits.simpleWindow(1000, 7000);
-        Window.setScriptName('date-link-remover.js');
+        let Window = new Morebits.simpleWindow(1000, 400);
+        Window.setScriptName('date-link-remover-control-panel.js');
         Window.setTitle('Eliminar fechas');
 
         let form = new Morebits.quickForm(submit);
@@ -110,7 +111,7 @@ const dateLinkeRemoverControlPanel = (() => {
 
         form.append({
             type: 'submit',
-            label: 'Aceptar',
+            label: 'Generar lista',
             id: 'createArray',
         });
 
@@ -120,18 +121,36 @@ const dateLinkeRemoverControlPanel = (() => {
     }
 
     function submit() {
-        let articleList;
         console.log('submitted');
+        const box = document.getElementById('articlesBox');
         const submitButton = document.querySelector('button.submitButtonProxy')
         submitButton.id = 'submitButton';
         submitButton.style = 'margin-right: 1em;';
         submitButton.setAttribute('disabled', '');
-        const initializeButton = document.createElement("button");
-        initializeButton.innerText = 'Iniciar';
-        document.querySelector('span.morebits-dialog-buttons').append(initializeButton);
-        const box = document.getElementById('articlesBox');
+        if (!document.getElementById('initializeButton')) {
+            const initializeButton = document.createElement("button");
+            initializeButton.id = 'initializeButton';
+            initializeButton.innerText = 'Iniciar';
+            document.querySelector('span.morebits-dialog-buttons').append(initializeButton)
+        }
+        if (!document.getElementById('cleanupButton')) {
+            const cleanupButton = document.createElement("button");
+            cleanupButton.id = 'cleanupButton';
+            cleanupButton.style = 'margin-left: 1em;';
+            cleanupButton.innerText = 'Limpiar lista';
+            cleanupButton.style.backgroundColor = '#E7EBDA';
+            document.querySelector('span.morebits-dialog-buttons').append(cleanupButton);
+            cleanupButton.addEventListener('click', () => {
+                articleList = [];
+                box.innerHTML = '';
+                cleanupButton.setAttribute('disabled', '');
+                submitButton.removeAttribute('disabled');
+            })
+        }
+
         genArticleList().then((result) => {
             articleList = result;
+            cleanupButton.removeAttribute('disabled');
             for (let article of articleList) {
                 let spanElement = document.createElement("span");
                 spanElement.id = article
@@ -155,6 +174,7 @@ const dateLinkeRemoverControlPanel = (() => {
             }
         }).then(() => {
             initializeButton.addEventListener("click", async () => {
+                initializeButton.setAttribute('disabled', '');
                 for (let article of articleList) {
                     const content = await getContent(article);
                     const useRegex = regex.test(content);
@@ -187,7 +207,9 @@ const dateLinkeRemoverControlPanel = (() => {
                         htmlElement.style.color = 'darkgray';
                     }
                 }
-                console.log("terminado");
+                alert("Tarea finalizada");
+                submitButton.removeAttribute('disabled');
+                initializeButton.removeAttribute('disabled');
             })
         })
     }
