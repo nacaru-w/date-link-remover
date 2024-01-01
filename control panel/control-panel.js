@@ -132,6 +132,45 @@ const dateLinkeRemoverControlPanel = (() => {
             initializeButton.id = 'initializeButton';
             initializeButton.innerText = 'Iniciar';
             document.querySelector('span.morebits-dialog-buttons').append(initializeButton)
+            initializeButton.addEventListener("click", async () => {
+                initializeButton.setAttribute('disabled', '');
+                cleanupButton.setAttribute('disabled', '');
+                for (let article of articleList) {
+                    const content = await getContent(article);
+                    const useRegex = regex.test(content);
+                    const usePipeRegex = pipeRegex.test(content);
+                    const useTemplateRegex = templateRegex.test(content);
+                    if (useRegex || usePipeRegex || useTemplateRegex) {
+                        await new mw.Api().edit(
+                            article,
+                            (revision) => {
+                                return {
+                                    text: textReplacer(revision.content, useRegex, usePipeRegex, useTemplateRegex),
+                                    summary: 'Eliminando enlaces según [[WP:ENLACESFECHAS]]',
+                                    minor: false,
+                                    token: 'crsf'
+                                }
+                            }
+                        ).then(() => {
+                            const htmlElement = document.getElementById(article);
+                            htmlElement.style.color = 'darkgreen';
+                        }).catch((error) => {
+                            console.log(error);
+                        })
+
+                        await wait(12000);
+
+                    }
+
+                    if (!useRegex && !usePipeRegex && !useTemplateRegex) {
+                        const htmlElement = document.getElementById(article);
+                        htmlElement.style.color = 'darkgray';
+                    }
+                }
+                alert("Tarea finalizada");
+                submitButton.removeAttribute('disabled');
+                initializeButton.removeAttribute('disabled');
+            })
         }
         if (!document.getElementById('cleanupButton')) {
             const cleanupButton = document.createElement("button");
@@ -172,45 +211,6 @@ const dateLinkeRemoverControlPanel = (() => {
                 box.appendChild(button);
 
             }
-        }).then(() => {
-            initializeButton.addEventListener("click", async () => {
-                initializeButton.setAttribute('disabled', '');
-                for (let article of articleList) {
-                    const content = await getContent(article);
-                    const useRegex = regex.test(content);
-                    const usePipeRegex = pipeRegex.test(content);
-                    const useTemplateRegex = templateRegex.test(content);
-                    if (useRegex || usePipeRegex || useTemplateRegex) {
-                        await new mw.Api().edit(
-                            article,
-                            (revision) => {
-                                return {
-                                    text: textReplacer(revision.content, useRegex, usePipeRegex, useTemplateRegex),
-                                    summary: 'Eliminando enlaces según [[WP:ENLACESFECHAS]]',
-                                    minor: false,
-                                    token: 'crsf'
-                                }
-                            }
-                        ).then(() => {
-                            const htmlElement = document.getElementById(article);
-                            htmlElement.style.color = 'darkgreen';
-                        }).catch((error) => {
-                            console.log(error);
-                        })
-
-                        await wait(12000);
-
-                    }
-
-                    if (!useRegex && !usePipeRegex && !useTemplateRegex) {
-                        const htmlElement = document.getElementById(article);
-                        htmlElement.style.color = 'darkgray';
-                    }
-                }
-                alert("Tarea finalizada");
-                submitButton.removeAttribute('disabled');
-                initializeButton.removeAttribute('disabled');
-            })
         })
     }
 
