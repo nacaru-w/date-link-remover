@@ -1,25 +1,21 @@
 //<nowiki>
-let articleList;
-
 const dateLinkeRemoverControlPanel = (() => {
+    let articleList;
+
     console.log('Loading control panel');
     const currentPage = mw.config.get('wgPageName');
 
-    const loadDependencies = async (callback) => {
-        await mw.loader.using(
+    async function loadDependencies() {
+        await mw.loader.using([
             'mediawiki.user',
             'mediawiki.util',
             'mediawiki.Title',
             'jquery.ui',
-            'mediawiki.api'
-        );
+            'mediawiki.api',
+        ]);
+        console.log('Dependencies have been loaded');
         await mw.loader.load('https://en.wikipedia.org/w/index.php?title=MediaWiki:Gadget-morebits.js&action=raw&ctype=text/javascript', 'text/javascript');
         await mw.loader.load('https://en.wikipedia.org/w/index.php?title=MediaWiki:Gadget-morebits.css&action=raw&ctype=text/css', 'text/css');
-        if (document.readyState !== 'loading') {
-            callback();
-        } else {
-            document.addEventListener('DOMContentLoaded', callback());
-        }
     }
 
     function getContent(pageName) {
@@ -150,7 +146,7 @@ const dateLinkeRemoverControlPanel = (() => {
                             (revision) => {
                                 return {
                                     text: textReplacer(revision.content, useRegex, usePipeRegex, useTemplateRegex),
-                                    summary: 'Eliminando enlaces según [[WP:ENLACESFECHAS]]',
+                                    summary: 'Bot: eliminando enlaces según [[WP:ENLACESFECHAS]]',
                                     minor: false,
                                     token: 'crsf'
                                 }
@@ -220,11 +216,18 @@ const dateLinkeRemoverControlPanel = (() => {
     }
 
     if (currentPage == 'Usuario:Nacaru/date-link-remover-control-panel') {
-        console.log('In the right page');
-        const button = document.querySelector('span.control-panel-button')
-        button.addEventListener("click", () => {
-            loadDependencies(loadControlPanel);
-        })
+        (async () => {
+            await loadDependencies();
+            console.log('In the right page');
+            const button = document.querySelector('span.control-panel-button')
+            button.addEventListener("click", () => {
+                if (document.readyState !== 'loading') {
+                    loadControlPanel();
+                } else {
+                    document.addEventListener('DOMContentLoaded', loadControlPanel());
+                }
+            })
+        })()
     }
 
 })();
