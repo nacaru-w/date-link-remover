@@ -1,6 +1,13 @@
 //<nowiki>
+
 const dateLinkeRemoverControlPanel = (() => {
+    // Regexes variables
+    const regex = /\[\[((?:\d{1,2}º? de )?(?:(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)(?: de [1-9]\d{0,3})?)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década de)\s)?(?:[1-9]\d{0,3}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)\]\]/i;
+    const pipeRegex = /\[\[((?:\d{1,2}º? de )?(?:(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)(?: de [1-9]\d{0,3})?)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década de)\s)?(?:[1-9]\d{0,3}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)(?:\|([^\]]*))\]\]/i;
+    const templateRegex = /(\{\{(?:siglo|(?:Julgreg)?fecha)[^\}]+)(?:\|1|\|Link\s*=\s*(?:\"true\"|(?:s[ií]|pt)))\s*(\}\})/i;
+
     let articleList;
+    let articleDict;
 
     console.log('Loading control panel');
     const currentPage = mw.config.get('wgPageName');
@@ -37,26 +44,48 @@ const dateLinkeRemoverControlPanel = (() => {
         return apiPromise;
     }
 
-    function genArticleList() {
+    async function genArticleList() {
+
+        let messageBox = document.getElementById('messageBox');
+        let initialText = messageBox.innerText;
+
+        let finalList = [];
         const params = {
             action: 'query',
             format: 'json',
             list: 'random',
             rnnamespace: '0|104',
-            rnlimit: '100'
+            rnlimit: '1'
         },
             api = new mw.Api();
 
-        let apiPromise = api.get(params).then((data) => {
-            let finalList = []
-            var randoms = data.query.random,
-                r;
-            for (r in randoms) {
-                finalList.push(randoms[r].title);
+        while (finalList.length < 5) {
+            messageBox.innerText += '.'
+            if (messageBox.innerText == (initialText + '....')) {
+                messageBox.innerText = initialText;
             }
-            return finalList
-        });
-        return apiPromise
+
+            const result = await api.get(params);
+            const article = result.query.random[0].title;
+
+            const content = await getContent(article);
+
+            const useRegex = regex.test(content);
+            const usePipeRegex = pipeRegex.test(content);
+            const useTemplateRegex = templateRegex.test(content);
+
+            if (regex.test(content) || pipeRegex.test(content) || templateRegex.test(content)) {
+                finalList.push(article);
+                articleDict[article] = {
+                    regexEval: useRegex,
+                    pipeRegexEval: usePipeRegex,
+                    templateRegexEval: useTemplateRegex,
+                }
+            }
+        }
+
+        return finalList;
+
     }
 
     function wait(ms) {
@@ -68,15 +97,6 @@ const dateLinkeRemoverControlPanel = (() => {
     function makeRegexGlobal(expression) {
         return new RegExp(expression, "gi");
     }
-
-    // Regexes for titles
-    // const titleRegex = /^[1-9]\d{0,3}$/;
-
-    // Regexes variables
-
-    const regex = /\[\[((?:\d{1,2}º? de )?(?:(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)(?: de [1-9]\d{0,3})?)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década de)\s)?(?:[1-9]\d{0,3}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)\]\]/i;
-    const pipeRegex = /\[\[((?:\d{1,2}º? de )?(?:(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)(?: de [1-9]\d{0,3})?)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década de)\s)?(?:[1-9]\d{0,3}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)(?:\|([^\]]*))\]\]/i;
-    const templateRegex = /(\{\{(?:siglo|(?:Julgreg)?fecha)[^\}]+)(?:\|1|\|Link\s*=\s*(?:\"true\"|(?:s[ií]|pt)))\s*(\}\})/i;
 
     function textReplacer(articleText, applyRegex, applyPipeRegex, applyTemplateRegex) {
         let newText = articleText;
@@ -120,9 +140,24 @@ const dateLinkeRemoverControlPanel = (() => {
         Window.display();
     }
 
+    function generateLoadingMessage(parentElement) {
+        const messageBox = document.createElement('div')
+        messageBox.id = 'messageBox';
+        messageBox.style = 'font-weight: bold; font-size: 1.2em; height: auto; width: auto; text-align: center;'
+        messageBox.innerText = 'Generando lista de artículos'
+        parentElement.appendChild(messageBox);
+    }
+
+    function deleteLoadingMessage() {
+        const messageBox = document.getElementById('messageBox');
+        messageBox.remove();
+    }
+
     function submit() {
+        articleDict = {};
         console.log('submitted');
         const box = document.getElementById('articlesBox');
+        generateLoadingMessage(box);
         const submitButton = document.querySelector('button.submitButtonProxy')
         submitButton.id = 'submitButton';
         submitButton.style = 'margin-right: 1em;';
@@ -136,36 +171,32 @@ const dateLinkeRemoverControlPanel = (() => {
                 initializeButton.setAttribute('disabled', '');
                 cleanupButton.setAttribute('disabled', '');
                 for (let article of articleList) {
-                    const content = await getContent(article);
-                    const useRegex = regex.test(content);
-                    const usePipeRegex = pipeRegex.test(content);
-                    const useTemplateRegex = templateRegex.test(content);
-                    if (useRegex || usePipeRegex || useTemplateRegex) {
-                        await new mw.Api().edit(
-                            article,
-                            (revision) => {
-                                return {
-                                    text: textReplacer(revision.content, useRegex, usePipeRegex, useTemplateRegex),
-                                    summary: 'Bot: eliminando enlaces según [[WP:ENLACESFECHAS]]',
-                                    minor: false,
-                                    token: 'crsf'
-                                }
+                    await new mw.Api().edit(
+                        article,
+                        (revision) => {
+                            return {
+                                text: textReplacer(
+                                    revision.content,
+                                    articleDict[article].regexEval,
+                                    articleDict[article].pipeRegexEval,
+                                    articleDict[article].templateRegexEval
+                                ),
+                                summary: 'Eliminando enlaces según [[WP:ENLACESFECHAS]]',
+                                minor: false,
+                                token: 'crsf'
                             }
-                        ).then(() => {
-                            const htmlElement = document.getElementById(article);
-                            htmlElement.style.color = 'darkgreen';
-                        }).catch((error) => {
-                            console.log(error);
-                        })
-
-                        await wait(12000);
-
-                    }
-
-                    if (!useRegex && !usePipeRegex && !useTemplateRegex) {
+                        }
+                    ).then(() => {
                         const htmlElement = document.getElementById(article);
-                        htmlElement.style.color = 'darkgray';
-                    }
+                        htmlElement.style.color = 'darkgreen';
+                    }).catch((error) => {
+                        const htmlElement = document.getElementById(article);
+                        htmlElement.style.color = 'red';
+                        console.log(error);
+                    })
+
+                    await wait(12000);
+
                 }
                 alert("Tarea finalizada");
                 cleanupButton.removeAttribute('disabled');
@@ -188,6 +219,7 @@ const dateLinkeRemoverControlPanel = (() => {
         }
 
         genArticleList().then((result) => {
+            deleteLoadingMessage();
             articleList = result;
             cleanupButton.removeAttribute('disabled');
             initializeButton.removeAttribute('disabled');
