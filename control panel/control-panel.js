@@ -201,7 +201,7 @@ const dateLinkeRemoverControlPanel = (() => {
                     }).catch((error) => {
                         const htmlElement = document.getElementById(article);
                         htmlElement.style.color = 'red';
-                        console.log(error);
+                        console.log(`Se ha producido un error: ${error}`);
                     })
 
                     await wait(12000);
