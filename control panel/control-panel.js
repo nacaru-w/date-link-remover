@@ -44,12 +44,19 @@ const dateLinkeRemoverControlPanel = (() => {
         return apiPromise;
     }
 
+    let articlesFound = 0;
+
     async function genArticleList() {
+        let promises = [];
+        for (let i = 0; i < 100; i++) {
+            promises.push(genArticle())
+        }
+        let result = await Promise.all(promises);
+        return result.flat(1)
+    }
 
-        let messageBox = document.getElementById('messageBox');
-        let initialText = messageBox.innerText;
-
-        let finalList = [];
+    async function genArticle() {
+        let selectedArticle = null;
         const params = {
             action: 'query',
             format: 'json',
@@ -59,15 +66,9 @@ const dateLinkeRemoverControlPanel = (() => {
         },
             api = new mw.Api();
 
-        while (finalList.length < 101) {
-            messageBox.innerText += '.'
-            if (messageBox.innerText == (initialText + '....')) {
-                messageBox.innerText = initialText;
-            }
-
+        while (selectedArticle === null) {
             const result = await api.get(params);
             const article = result.query.random[0].title;
-
             const content = await getContent(article);
 
             const useRegex = regex.test(content);
@@ -75,8 +76,8 @@ const dateLinkeRemoverControlPanel = (() => {
             const useTemplateRegex = templateRegex.test(content);
 
             if (useRegex || usePipeRegex || useTemplateRegex) {
-                finalList.push(article);
-                articleDict[article] = {
+                selectedArticle = article;
+                articleDict[selectedArticle] = {
                     regexEval: useRegex,
                     pipeRegexEval: usePipeRegex,
                     templateRegexEval: useTemplateRegex,
@@ -84,7 +85,10 @@ const dateLinkeRemoverControlPanel = (() => {
             }
         }
 
-        return finalList;
+        articlesFound++
+        updateLoadingMessage(articlesFound)
+        console.log(`Found ${articlesFound} articles so far`)
+        return selectedArticle;
 
     }
 
@@ -144,13 +148,18 @@ const dateLinkeRemoverControlPanel = (() => {
         const messageBox = document.createElement('div')
         messageBox.id = 'messageBox';
         messageBox.style = 'font-weight: bold; font-size: 1.2em; height: auto; width: auto; text-align: center;'
-        messageBox.innerText = 'Generando lista de artículos'
+        messageBox.innerText = 'Cargando artículos (0/100)'
         parentElement.appendChild(messageBox);
     }
 
     function deleteLoadingMessage() {
         const messageBox = document.getElementById('messageBox');
         messageBox.remove();
+    }
+
+    function updateLoadingMessage(number) {
+        const messageBox = document.getElementById('messageBox');
+        messageBox.innerText = `Cargando artículos (${number}/100)`
     }
 
     function submit() {
