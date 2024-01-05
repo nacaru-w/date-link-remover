@@ -59,7 +59,7 @@ const dateLinkeRemoverControlPanel = (() => {
         },
             api = new mw.Api();
 
-        while (finalList.length < 5) {
+        while (finalList.length < 101) {
             messageBox.innerText += '.'
             if (messageBox.innerText == (initialText + '....')) {
                 messageBox.innerText = initialText;
@@ -74,7 +74,7 @@ const dateLinkeRemoverControlPanel = (() => {
             const usePipeRegex = pipeRegex.test(content);
             const useTemplateRegex = templateRegex.test(content);
 
-            if (regex.test(content) || pipeRegex.test(content) || templateRegex.test(content)) {
+            if (useRegex || usePipeRegex || useTemplateRegex) {
                 finalList.push(article);
                 articleDict[article] = {
                     regexEval: useRegex,
