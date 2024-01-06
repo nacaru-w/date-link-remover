@@ -6,10 +6,14 @@ const dateLinkeRemoverControlPanel = (() => {
     const pipeRegex = /\[\[((?:\d{1,2}º? de )?(?:(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)(?: de [1-9]\d{0,3})?)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década de)\s)?(?:[1-9]\d{0,3}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)(?:\|([^\]]*))\]\]/i;
     const templateRegex = /(\{\{(?:siglo|(?:Julgreg)?fecha)[^\}]+)(?:\|1|\|Link\s*=\s*(?:\"true\"|(?:s[ií]|pt)))\s*(\}\})/i;
 
+    // This one is so that the function that finds the articles can discard them if they're within the calendar-related scope
+    const titleRegex = /^((?:\d{1,2}º? de )?(?:(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)(?: de [1-9]\d{0,3})?)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década de)\s)?(?:[1-9]\d{0,3}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)$/i;
+
     let articleList;
     let articleDict;
+    let articlesFound = 0;
 
-    console.log('Loading control panel');
+    console.log('Loading date-link-remover control panel');
     const currentPage = mw.config.get('wgPageName');
 
     async function loadDependencies() {
@@ -44,7 +48,7 @@ const dateLinkeRemoverControlPanel = (() => {
         return apiPromise;
     }
 
-    let articlesFound = 0;
+
 
     async function genArticleList() {
         let promises = [];
@@ -52,7 +56,7 @@ const dateLinkeRemoverControlPanel = (() => {
             promises.push(genArticle())
         }
         let result = await Promise.all(promises);
-        return result.flat(1)
+        return result.flat(1);
     }
 
     async function genArticle() {
@@ -75,19 +79,20 @@ const dateLinkeRemoverControlPanel = (() => {
             const usePipeRegex = pipeRegex.test(content);
             const useTemplateRegex = templateRegex.test(content);
 
-            if (useRegex || usePipeRegex || useTemplateRegex) {
+            const calendarTitle = titleRegex.test(article);
+
+            if (!calendarTitle && useRegex || usePipeRegex || useTemplateRegex) {
                 selectedArticle = article;
                 articleDict[selectedArticle] = {
                     regexEval: useRegex,
                     pipeRegexEval: usePipeRegex,
                     templateRegexEval: useTemplateRegex,
-                }
+                };
             }
         }
 
-        articlesFound++
-        updateLoadingMessage(articlesFound)
-        console.log(`Found ${articlesFound} articles so far`)
+        articlesFound++;
+        updateLoadingMessage(articlesFound);
         return selectedArticle;
 
     }
@@ -120,7 +125,6 @@ const dateLinkeRemoverControlPanel = (() => {
     }
 
     function loadControlPanel() {
-        console.log('loading window');
         let Window = new Morebits.simpleWindow(1000, 400);
         Window.setScriptName('date-link-remover-control-panel.js');
         Window.setTitle('Eliminar fechas');
@@ -155,6 +159,7 @@ const dateLinkeRemoverControlPanel = (() => {
     function deleteLoadingMessage() {
         const messageBox = document.getElementById('messageBox');
         messageBox.remove();
+        articlesFound = 0;
     }
 
     function updateLoadingMessage(number) {
@@ -164,7 +169,7 @@ const dateLinkeRemoverControlPanel = (() => {
 
     function submit() {
         articleDict = {};
-        console.log('submitted');
+        console.log('Loading articles...');
         const box = document.getElementById('articlesBox');
         generateLoadingMessage(box);
         const submitButton = document.querySelector('button.submitButtonProxy')
@@ -190,7 +195,7 @@ const dateLinkeRemoverControlPanel = (() => {
                                     articleDict[article].pipeRegexEval,
                                     articleDict[article].templateRegexEval
                                 ),
-                                summary: 'Eliminando enlaces según [[WP:ENLACESFECHAS]]',
+                                summary: 'Bot: eliminando enlaces según [[WP:ENLACESFECHAS]]',
                                 minor: false,
                                 token: 'crsf'
                             }
@@ -201,7 +206,7 @@ const dateLinkeRemoverControlPanel = (() => {
                     }).catch((error) => {
                         const htmlElement = document.getElementById(article);
                         htmlElement.style.color = 'red';
-                        console.log(`Se ha producido un error: ${error}`);
+                        console.log(`The following error happened: ${error}`);
                     })
 
                     await wait(12000);
@@ -259,7 +264,6 @@ const dateLinkeRemoverControlPanel = (() => {
     if (currentPage == 'Usuario:Nacaru/date-link-remover-control-panel') {
         (async () => {
             await loadDependencies();
-            console.log('In the right page');
             const button = document.querySelector('span.control-panel-button')
             button.addEventListener("click", () => {
                 if (document.readyState !== 'loading') {
