@@ -180,6 +180,7 @@ const dateLinkeRemoverControlPanel = (() => {
             const initializeButton = document.createElement("button");
             initializeButton.id = 'initializeButton';
             initializeButton.innerText = 'Iniciar';
+            initializeButton.setAttribute('disabled', '');
             document.querySelector('span.morebits-dialog-buttons').append(initializeButton)
             initializeButton.addEventListener("click", async () => {
                 initializeButton.setAttribute('disabled', '');
@@ -222,6 +223,7 @@ const dateLinkeRemoverControlPanel = (() => {
             cleanupButton.style = 'margin-left: 1em;';
             cleanupButton.innerText = 'Limpiar lista';
             cleanupButton.style.backgroundColor = '#E7EBDA';
+            cleanupButton.setAttribute('disabled', '');
             document.querySelector('span.morebits-dialog-buttons').append(cleanupButton);
             cleanupButton.addEventListener('click', () => {
                 articleList = [];
