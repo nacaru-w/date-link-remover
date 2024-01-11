@@ -1,5 +1,18 @@
 //<nowiki>
 
+/** 
+ * Si quieres usar el script, copia y pega el código que aparece a continuación en tu página common.js (puedes acceder a ella mediante este enlace: https://es.wikipedia.org/wiki/Especial:MiP%C3%A1gina/common.js):
+ *
+ * mw.loader.load("https://es.wikipedia.org/w/index.php?title=Usuario:Nacaru/date-link-remover.js&action=raw&ctype=text/javascript");
+ *
+ * El script funciona creando un enlace con el texto «[[WP:FECHASENLACES]]» en páginas en las que detecta que hay enlaces internos a fechas.
+ * Al hacer clic en él, eliminará automáticamente los enlaces internos que encuentre en las fechas según esa reglad el manual de estilo.
+ * Recuerda que los artículos que traten temas directamente relacionados con el calendario están exentos de cumplir esta norma.
+ * Además, si existe un acuerdo en la PD un artículo, deberá respetarse siempre el consenso local.
+ * 
+ * Este código está liberado bajo la licencia GPL-3.0 (según se estipula en su repositorio original en https://github.com/nacaru-w/date-link-remover).
+ */
+
 const dateLinkeRemoverControlPanel = (() => {
     // Regexes variables
     const regex = /\[\[((?:\d{1,2}º?\sde\s)?(?:(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)(?:\sde\s[1-9]\d{0,3})?)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década de)\s)?(?:[1-9]\d{0,3}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)\]\]/i;
