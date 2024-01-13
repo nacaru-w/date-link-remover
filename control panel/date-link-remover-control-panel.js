@@ -22,6 +22,19 @@ const dateLinkeRemoverControlPanel = (() => {
     console.log('Loading date-link-remover control panel');
     const currentPage = mw.config.get('wgPageName');
 
+    async function listUserGroups() {
+        var params = {
+            action: 'query',
+            meta: 'userinfo',
+            uiprop: 'groups',
+            format: 'json'
+        };
+        var api = new mw.Api();
+
+        const data = await api.get(params);
+        return data.query.userinfo.groups;
+    }
+
     async function loadDependencies() {
         await mw.loader.using([
             'mediawiki.user',
@@ -301,15 +314,20 @@ const dateLinkeRemoverControlPanel = (() => {
 
     if (currentPage == 'Usuario:Nacaru/date-link-remover-control-panel') {
         (async () => {
-            await loadDependencies();
-            const button = document.querySelector('span.control-panel-button')
-            button.addEventListener("click", () => {
-                if (document.readyState !== 'loading') {
-                    loadControlPanel();
-                } else {
-                    document.addEventListener('DOMContentLoaded', loadControlPanel());
-                }
-            })
+            const userGroups = await listUserGroups();
+            if (userGroups.includes('bot')) {
+                await loadDependencies();
+                const button = document.querySelector('span.control-panel-button')
+                button.addEventListener("click", () => {
+                    if (document.readyState !== 'loading') {
+                        loadControlPanel();
+                    } else {
+                        document.addEventListener('DOMContentLoaded', loadControlPanel());
+                    }
+                })
+            } else {
+                alert('Lo siento, este script solo debe ser utilizado por bots');
+            }
         })()
     }
 
