@@ -175,7 +175,7 @@ const dateLinkeRemoverControlPanel = (() => {
 
     function updateLoadingMessage(number) {
         const messageBox = document.getElementById('messageBox');
-        messageBox.innerText = `Cargando artículos (${number}/100)`
+        messageBox.innerText = `Cargando artículos (${number}/100)`;
     }
 
     function loadProgressBar(parentElement) {
