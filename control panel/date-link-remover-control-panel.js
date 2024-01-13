@@ -119,11 +119,11 @@ const dateLinkeRemoverControlPanel = (() => {
 
     }
 
-    function wait(ms) {
-        return new Promise(resolve => {
-            setTimeout(resolve, ms);
-        });
-    }
+    // function wait(ms) {
+    //     return new Promise(resolve => {
+    //         setTimeout(resolve, ms);
+    //     });
+    // }
 
     function makeRegexGlobal(expression) {
         return new RegExp(expression, "gi");
@@ -258,8 +258,6 @@ const dateLinkeRemoverControlPanel = (() => {
                         htmlElement.style.color = 'red';
                         console.log(`The following error happened: ${error}`);
                     })
-
-                    await wait(12000);
 
                 }
                 alert("Tarea finalizada");
