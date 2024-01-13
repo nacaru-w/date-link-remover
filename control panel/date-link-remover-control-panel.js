@@ -66,6 +66,8 @@ const dateLinkeRemoverControlPanel = (() => {
     }
 
     async function genArticle() {
+        const barFill = document.getElementById('barFill');
+
         let selectedArticle = null;
         const params = {
             action: 'query',
@@ -99,6 +101,7 @@ const dateLinkeRemoverControlPanel = (() => {
 
         articlesFound++;
         updateLoadingMessage(articlesFound);
+        barFill.style.width = `${articlesFound}%`;
         return selectedArticle;
 
     }
@@ -155,15 +158,17 @@ const dateLinkeRemoverControlPanel = (() => {
     }
 
     function generateLoadingMessage(parentElement) {
-        const messageBox = document.createElement('div')
+        const messageBox = document.createElement('div');
         messageBox.id = 'messageBox';
         messageBox.style = 'font-weight: bold; font-size: 1.2em; height: auto; width: auto; text-align: center;'
         messageBox.innerText = 'Cargando artículos (0/100)'
         parentElement.appendChild(messageBox);
     }
 
-    function deleteLoadingMessage() {
+    function deleteLoadingElements() {
         const messageBox = document.getElementById('messageBox');
+        const progressBar = document.getElementById('progressBarContainer');
+        progressBar.remove();
         messageBox.remove();
         articlesFound = 0;
     }
@@ -173,11 +178,36 @@ const dateLinkeRemoverControlPanel = (() => {
         messageBox.innerText = `Cargando artículos (${number}/100)`
     }
 
+    function loadProgressBar(parentElement) {
+        const progressBarContainer = document.createElement('div');
+        progressBarContainer.id = 'progressBarContainer';
+        progressBarContainer.style.height = '2em';
+        progressBarContainer.style.width = '25em';
+        progressBarContainer.style.border = 'solid black 2px'
+        progressBarContainer.style.boxShadow = 'inset 0 1px 3px rgba(0, 0, 0, .2);';
+        progressBarContainer.style.borderRadius = '3px';
+        progressBarContainer.style.margin = '0 auto';
+
+        const barFill = document.createElement('div');
+        barFill.id = 'barFill';
+        barFill.style.height = '100%';
+        barFill.style.transition = 'width 500ms ease-in-out;';
+        barFill.style.width = '0%';
+        barFill.style.borderRadius = '3px';
+        barFill.style.backgroundColor = '#659cef';
+
+        progressBarContainer.appendChild(barFill);
+        parentElement.appendChild(progressBarContainer);
+    }
+
+
+
     function submit() {
         articleDict = {};
         console.log('Loading articles...');
         const box = document.getElementById('articlesBox');
         generateLoadingMessage(box);
+        loadProgressBar(box);
         const submitButton = document.querySelector('button.submitButtonProxy')
         submitButton.id = 'submitButton';
         submitButton.style = 'margin-right: 1em;';
@@ -241,7 +271,7 @@ const dateLinkeRemoverControlPanel = (() => {
         }
 
         genArticleList().then((result) => {
-            deleteLoadingMessage();
+            deleteLoadingElements();
             articleList = result;
             cleanupButton.removeAttribute('disabled');
             initializeButton.removeAttribute('disabled');
