@@ -87,7 +87,7 @@ const dateLinkeRemoverControlPanel = (() => {
 
             const calendarTitle = titleRegex.test(article);
 
-            if (!calendarTitle && useRegex || usePipeRegex || useTemplateRegex) {
+            if (!calendarTitle && (useRegex || usePipeRegex || useTemplateRegex)) {
                 selectedArticle = article;
                 articleDict[selectedArticle] = {
                     regexEval: useRegex,
