@@ -18,6 +18,11 @@ const dateLinkeRemoverControlPanel = (() => {
     let articleList;
     let articleDict;
     let articlesFound = 0;
+    let api = new mw.Api({
+        ajax: {
+            headers: { 'Api-User-Agent': 'Nacarubot/1.0 JavaScript/:w:es:User:Nacaru/date-link-remover-control-panel.js' }
+        }
+    });
 
     console.log('Loading date-link-remover control panel');
     const currentPage = mw.config.get('wgPageName');
@@ -29,7 +34,6 @@ const dateLinkeRemoverControlPanel = (() => {
             uiprop: 'groups',
             format: 'json'
         };
-        var api = new mw.Api();
 
         const data = await api.get(params);
         return data.query.userinfo.groups;
@@ -59,7 +63,7 @@ const dateLinkeRemoverControlPanel = (() => {
             format: 'json'
         };
 
-        let apiPromise = new mw.Api().get(params).then(
+        let apiPromise = api.get(params).then(
             ((data) => {
                 return data.query.pages[0].revisions[0].slots?.main?.content
             })
@@ -88,8 +92,7 @@ const dateLinkeRemoverControlPanel = (() => {
             list: 'random',
             rnnamespace: '0|104',
             rnlimit: '1'
-        },
-            api = new mw.Api();
+        };
 
         while (selectedArticle === null) {
             const result = await api.get(params);
@@ -235,7 +238,7 @@ const dateLinkeRemoverControlPanel = (() => {
                 initializeButton.setAttribute('disabled', '');
                 cleanupButton.setAttribute('disabled', '');
                 for (let article of articleList) {
-                    await new mw.Api().edit(
+                    await api.edit(
                         article,
                         (revision) => {
                             return {
