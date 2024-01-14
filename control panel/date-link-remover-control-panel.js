@@ -247,7 +247,8 @@ const dateLinkeRemoverControlPanel = (() => {
                                 ),
                                 summary: 'Bot: eliminando enlaces según [[WP:ENLACESFECHAS]]',
                                 minor: false,
-                                token: 'crsf'
+                                token: 'crsf',
+                                bot: true
                             }
                         }
                     ).then(() => {
