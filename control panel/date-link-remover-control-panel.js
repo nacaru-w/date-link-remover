@@ -18,7 +18,7 @@ const dateLinkeRemoverControlPanel = (() => {
     let articleList;
     let articleDict;
     let articlesFound = 0;
-    let api = new mw.Api({
+    const api = new mw.Api({
         ajax: {
             headers: { 'Api-User-Agent': 'Nacarubot/1.0 JavaScript/:w:es:User:Nacaru/date-link-remover-control-panel.js' }
         }
