@@ -13,7 +13,7 @@ const dateLinkeRemoverControlPanel = (() => {
     const templateRegex = /(\{\{(?:siglo|(?:Julgreg)?fecha)[^\}]+)(?:\|1|\|Link\s*=\s*(?:\"true\"|(?:s[ií]|pt)))\s*(\}\})/i;
 
     // This one is so that the function that finds the articles can discard them if they're within the calendar-related scope
-    const titleRegex = /^((?:\d{1,2}º? de |Anexo:Fallecidos en )?(?:(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)(?: de [1-9]\d{0,3})?)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década de)\s)?(?:[1-9]\d{0,3}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)$/i;
+    const titleRegex = /^((?:\d{1,2}º? de |Anexo:[A-Za-zÀ-ÖØ-öø-ÿ]+ en )?(?:(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)?(?:(?: de )?[1-9]\d{0,3})?)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década de)\s)?(?:[1-9]\d{0,3}|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)$/i;
 
     let articleList;
     let articleDict;
@@ -104,6 +104,10 @@ const dateLinkeRemoverControlPanel = (() => {
             const useTemplateRegex = templateRegex.test(content);
 
             const calendarTitle = titleRegex.test(article);
+
+            if (calendarTitle) {
+                console.log(article);
+            }
 
             if (!calendarTitle && (useRegex || usePipeRegex || useTemplateRegex)) {
                 selectedArticle = article;
