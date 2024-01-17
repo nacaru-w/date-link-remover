@@ -14,6 +14,8 @@
  */
 
 const dateLinkRemover = (() => {
+    const skin = mw.config.get('skin');
+
     // These should be loaded to ensure that everything works properly, the callback function that loads the script will only be called once DOM has been loaded
     const loadDependencies = (callback) => {
         mw.loader.using('mediawiki.api', 'mediawiki.util', 'mediawiki.user');
@@ -82,6 +84,10 @@ const dateLinkRemover = (() => {
                 console.log("found at least one date with brackets");
                 // This will add the button to remove the square brackets from dates if it finds such occurence in an article
                 const portletLink = mw.util.addPortletLink('p-views', '#', 'WP:ENLACESFECHAS', 'enlaces-fechas', 'Se han detectado enlaces en fechas, clic aquí para eliminarlos');
+                if (skin == 'minerva') {
+                    const icon = document.getElementsByClassName('minerva-icon minerva-icon-portletlink-enlaces-fechas mw-ui-icon-portletlink-enlaces-fechas');
+                    icon[0].style.backgroundImage = "url(https://upload.wikimedia.org/wikipedia/commons/2/2c/Tabler-icons_letter-f.svg)";
+                }
                 // Let's store the evaluations in constants while the user takes their time to click the button
 
                 if (portletLink) {
