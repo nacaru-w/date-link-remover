@@ -92,7 +92,7 @@ const dateLinkRemover = (() => {
                             (revision) => {
                                 return {
                                     text: textReplacer(revision.content, useRegex, usePipeRegex, useTemplateRegex),
-                                    summary: 'Eliminando enlaces según [[WP:ENLACESFECHAS]] mediante [[Usuario:Nacaru/date-link-remover.js|script]] #date-link-remover.js',
+                                    summary: 'Eliminando enlaces según [[WP:ENLACESFECHAS]] mediante [[Usuario:Nacaru/date-link-remover.js|script]] #DateLinkRemover',
                                     minor: false
                                 }
                             }
