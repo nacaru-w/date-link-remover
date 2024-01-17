@@ -5,7 +5,7 @@
  *
  * mw.loader.load("https://es.wikipedia.org/w/index.php?title=Usuario:Nacaru/date-link-remover.js&action=raw&ctype=text/javascript");
  *
- * El script funciona creando un enlace con el texto «[[WP:FECHASENLACES]]» en páginas en las que detecta que hay enlaces internos a fechas.
+ * El script funciona creando un enlace con el texto «[[WP:FECHASENLACES]]» (en la versión móvil, aparecerá simplemente una «F») en el menú de edición superior en páginas en las que detecta que hay enlaces internos a fechas.
  * Al hacer clic en él, eliminará automáticamente los enlaces internos que encuentre en las fechas según esa regla del manual de estilo.
  * Recuerda que los artículos que traten temas directamente relacionados con el calendario están exentos de cumplir esta norma.
  * Además, si existe un acuerdo en la PD un artículo, deberá respetarse siempre el consenso local.
