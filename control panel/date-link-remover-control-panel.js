@@ -13,7 +13,7 @@ const dateLinkeRemoverControlPanel = (() => {
     const templateRegex = /(\{\{(?:siglo|(?:Julgreg)?fecha)[^\}]+)(?:\|1|\|Link\s*=\s*(?:\"true\"|(?:s[ií]|pt)))\s*(\}\})/i;
 
     // This one is so that the function that finds the articles can discard them if they're within the calendar-related scope
-    const titleRegex = /^((?:\d{1,2}º? de |Anexo:[\dA-Za-zÀ-ÖØ-öø-ÿ\-\(\) ]+ en )?(?:(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre|año|día|mes)?(?:(?: de )?[1-9]\d{0,3})?)|(?:(?:Anexo:)?(?:Cronología|Día|Mes|Década|Siglo) de[\dA-Za-zÀ-ÖØ-öø-ÿ\-\(\) ]+)|(?:(?:Anexo:)?(Años?|Día (?:mundial|(?:inter)?nacional)) [\dA-Za-zÀ-ÖØ-öø-ÿ\-\(\) ]+)|(?:Calendario [\dA-Za-zÀ-ÖØ-öø-ÿ\-\(\) ]+)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década de)\s)?(?:[1-9]\d{0,3}(?: \(desambiguación\))?|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)$/i;
+    const titleRegex = /^((?:\d{1,2}º? de |Anexo:[\dA-Za-zÀ-ÖØ-öø-ÿ\-\(\) ]+ en )?(?:(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre|año|día|mes)?(?:(?: de )?[1-9]\d{0,3})?)|(?:(?:Anexo:)?(?:Cronología|Día|Mes|Década|Siglo) de[\dA-Za-zÀ-ÖØ-öø-ÿ\-\(\) ]+)|(?:(?:Anexo:)?(Años?|Día (?:mundial|(?:inter)?nacional)) [\dA-Za-zÀ-ÖØ-öø-ÿ\-\(\) ]+)|(?:(Calendario|Semana) [\dA-Za-zÀ-ÖØ-öø-ÿ\-\(\) ]+)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década de)\s)?(?:[1-9]\d{0,3}(?: \(desambiguación\))?|siglo(?:\s|&nbsp;)*\w+)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)$/i;
 
     let articleList;
     let articleDict;
@@ -103,7 +103,7 @@ const dateLinkeRemoverControlPanel = (() => {
 
     async function genArticleList() {
         let promises = [];
-        for (let i = 0; i < 5000; i++) {
+        for (let i = 0; i < 3000; i++) {
             promises.push(genArticle())
         }
         let result = await Promise.all(promises);
@@ -149,8 +149,8 @@ const dateLinkeRemoverControlPanel = (() => {
 
         articlesFound++;
         updateLoadingMessage(articlesFound);
-        if (articlesFound % 50 == 0) {
-            barFill.style.width = `${articlesFound / 50}%`;
+        if (articlesFound % 30 == 0) {
+            barFill.style.width = `${articlesFound / 30}%`;
         }
 
         return selectedArticle;
@@ -212,7 +212,7 @@ const dateLinkeRemoverControlPanel = (() => {
         const messageBox = document.createElement('div');
         messageBox.id = 'messageBox';
         messageBox.style = 'font-weight: bold; font-size: 1.2em; height: auto; width: auto; text-align: center;'
-        messageBox.innerText = 'Cargando artículos (0/5000)'
+        messageBox.innerText = 'Cargando artículos (0/3000)'
         parentElement.appendChild(messageBox);
     }
 
@@ -226,7 +226,7 @@ const dateLinkeRemoverControlPanel = (() => {
 
     function updateLoadingMessage(number) {
         const messageBox = document.getElementById('messageBox');
-        messageBox.innerText = `Cargando artículos (${number}/5000)`;
+        messageBox.innerText = `Cargando artículos (${number}/3000)`;
     }
 
     function loadProgressBar(parentElement) {
