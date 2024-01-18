@@ -95,7 +95,7 @@ const dateLinkeRemoverControlPanel = (() => {
                 }
             }
         ).then(res => {
-            console.log('Exception JSON list has been successfully updated', res.result);
+            console.log('Exception JSON list has been successfully updated:', res.result);
         }).catch(error => {
             console.log(`Error updating exception list: ${error}`);
         });
@@ -130,27 +130,25 @@ const dateLinkeRemoverControlPanel = (() => {
 
             if (calendarArticle) {
                 console.log(article);
+                continue;
             }
 
-            if (!calendarArticle) {
-                const content = await getContent(article);
+            const content = await getContent(article);
 
-                const hasCalendarCategory = calendarCategories.some(e => content.includes(e));
+            const hasCalendarCategory = calendarCategories.some(e => content.includes(e));
 
-                if (!hasCalendarCategory) {
+            if (!hasCalendarCategory) {
+                const useRegex = regex.test(content);
+                const usePipeRegex = pipeRegex.test(content);
+                const useTemplateRegex = templateRegex.test(content);
 
-                    const useRegex = regex.test(content);
-                    const usePipeRegex = pipeRegex.test(content);
-                    const useTemplateRegex = templateRegex.test(content);
-
-                    if (useRegex || usePipeRegex || useTemplateRegex) {
-                        selectedArticle = article;
-                        articleDict[selectedArticle] = {
-                            regexEval: useRegex,
-                            pipeRegexEval: usePipeRegex,
-                            templateRegexEval: useTemplateRegex,
-                        };
-                    }
+                if (useRegex || usePipeRegex || useTemplateRegex) {
+                    selectedArticle = article;
+                    articleDict[selectedArticle] = {
+                        regexEval: useRegex,
+                        pipeRegexEval: usePipeRegex,
+                        templateRegexEval: useTemplateRegex,
+                    };
                 }
             }
         }
