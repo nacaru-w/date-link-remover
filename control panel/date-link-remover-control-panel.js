@@ -103,13 +103,13 @@ const dateLinkeRemoverControlPanel = (() => {
             const usePipeRegex = pipeRegex.test(content);
             const useTemplateRegex = templateRegex.test(content);
 
-            const calendarTitle = titleRegex.test(article);
+            const calendarArticle = titleRegex.test(article) || content.includes("[[Categoría:Calendario");
 
-            if (calendarTitle) {
+            if (calendarArticle) {
                 console.log(article);
             }
 
-            if (!calendarTitle && (useRegex || usePipeRegex || useTemplateRegex)) {
+            if (!calendarArticle && (useRegex || usePipeRegex || useTemplateRegex)) {
                 selectedArticle = article;
                 articleDict[selectedArticle] = {
                     regexEval: useRegex,
