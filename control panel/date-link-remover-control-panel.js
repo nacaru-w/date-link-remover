@@ -19,7 +19,9 @@ const dateLinkeRemoverControlPanel = (() => {
     let articleDict;
     let articlesFound = 0;
 
-    const calendarCategories = ['', '[[Categoría:Anexos:Tablas anuales']
+    const calendarCategories = ['[[Categoría:Anexos:Tablas anuales', "[[Categoría:Calendario"];
+
+    let exceptions;
 
     const api = new mw.Api({
         ajax: {
@@ -53,6 +55,7 @@ const dateLinkeRemoverControlPanel = (() => {
         console.log('Dependencies have been loaded');
         await mw.loader.load('https://en.wikipedia.org/w/index.php?title=MediaWiki:Gadget-morebits.js&action=raw&ctype=text/javascript', 'text/javascript');
         await mw.loader.load('https://en.wikipedia.org/w/index.php?title=MediaWiki:Gadget-morebits.css&action=raw&ctype=text/css', 'text/css');
+
     }
 
     function getContent(pageName) {
@@ -74,7 +77,29 @@ const dateLinkeRemoverControlPanel = (() => {
         return apiPromise;
     }
 
+    async function getExceptions() {
+        const JSONexceptions = await getContent('Usuario:NacaruBot/date-link-remover-control-panel/exceptions.json');
+        exceptions = JSON.parse(JSONexceptions);
+    }
 
+    function updateExceptions() {
+        api.edit(
+            'Usuario:NacaruBot/date-link-remover-control-panel/exceptions.json',
+            () => {
+                return {
+                    text: JSON.stringify(exceptions),
+                    summary: 'Bot: actualizando lista de excepciones',
+                    minor: false,
+                    token: 'crsf',
+                    bot: true
+                }
+            }
+        ).then(res => {
+            console.log('Exception JSON list has been successfully updated', res.result);
+        }).catch(error => {
+            console.log(`Error updating exception list: ${error}`);
+        });
+    }
 
     async function genArticleList() {
         let promises = [];
@@ -106,7 +131,7 @@ const dateLinkeRemoverControlPanel = (() => {
             const usePipeRegex = pipeRegex.test(content);
             const useTemplateRegex = templateRegex.test(content);
 
-            const calendarArticle = titleRegex.test(article) || content.includes("[[Categoría:Calendario") || content.includes('[[Categoría:Anexos:Tablas anuales');
+            const calendarArticle = titleRegex.test(article) || calendarCategories.some(e => content.includes(e)) || exceptions.some(e => article == e);
 
             if (calendarArticle) {
                 console.log(article);
@@ -311,6 +336,8 @@ const dateLinkeRemoverControlPanel = (() => {
                     if (index !== -1) {
                         articleList.splice(index, 1);
                         spanElement.style = 'text-decoration: line-through;';
+                        exceptions.push(article);
+                        updateExceptions();
                     }
                 })
 
@@ -326,6 +353,8 @@ const dateLinkeRemoverControlPanel = (() => {
             const userGroups = await listUserGroups();
             if (userGroups.includes('bot')) {
                 await loadDependencies();
+                await getExceptions();
+                console.log("Exception list:", exceptions)
                 const button = document.querySelector('span.control-panel-button')
                 button.addEventListener("click", () => {
                     if (document.readyState !== 'loading') {
