@@ -103,7 +103,7 @@ const dateLinkeRemoverControlPanel = (() => {
 
     async function genArticleList() {
         let promises = [];
-        for (let i = 0; i < 1000; i++) {
+        for (let i = 0; i < 10000; i++) {
             promises.push(genArticle())
         }
         let result = await Promise.all(promises);
@@ -149,7 +149,10 @@ const dateLinkeRemoverControlPanel = (() => {
 
         articlesFound++;
         updateLoadingMessage(articlesFound);
-        barFill.style.width = `${articlesFound / 10}%`;
+        if (articlesFound % 100 == 0) {
+            barFill.style.width = `${articlesFound / 100}%`;
+        }
+
         return selectedArticle;
 
     }
@@ -209,7 +212,7 @@ const dateLinkeRemoverControlPanel = (() => {
         const messageBox = document.createElement('div');
         messageBox.id = 'messageBox';
         messageBox.style = 'font-weight: bold; font-size: 1.2em; height: auto; width: auto; text-align: center;'
-        messageBox.innerText = 'Cargando artículos (0/1000)'
+        messageBox.innerText = 'Cargando artículos (0/10000)'
         parentElement.appendChild(messageBox);
     }
 
@@ -223,7 +226,7 @@ const dateLinkeRemoverControlPanel = (() => {
 
     function updateLoadingMessage(number) {
         const messageBox = document.getElementById('messageBox');
-        messageBox.innerText = `Cargando artículos (${number}/1000)`;
+        messageBox.innerText = `Cargando artículos (${number}/10000)`;
     }
 
     function loadProgressBar(parentElement) {
