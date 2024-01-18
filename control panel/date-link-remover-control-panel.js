@@ -18,6 +18,9 @@ const dateLinkeRemoverControlPanel = (() => {
     let articleList;
     let articleDict;
     let articlesFound = 0;
+
+    const calendarCategories = ['', '[[Categoría:Anexos:Tablas anuales']
+
     const api = new mw.Api({
         ajax: {
             headers: { 'Api-User-Agent': 'Nacarubot/1.0 JavaScript/:w:es:User:Nacaru/date-link-remover-control-panel.js' }
@@ -103,7 +106,7 @@ const dateLinkeRemoverControlPanel = (() => {
             const usePipeRegex = pipeRegex.test(content);
             const useTemplateRegex = templateRegex.test(content);
 
-            const calendarArticle = titleRegex.test(article) || content.includes("[[Categoría:Calendario");
+            const calendarArticle = titleRegex.test(article) || content.includes("[[Categoría:Calendario") || content.includes('[[Categoría:Anexos:Tablas anuales');
 
             if (calendarArticle) {
                 console.log(article);
@@ -181,7 +184,7 @@ const dateLinkeRemoverControlPanel = (() => {
         const messageBox = document.createElement('div');
         messageBox.id = 'messageBox';
         messageBox.style = 'font-weight: bold; font-size: 1.2em; height: auto; width: auto; text-align: center;'
-        messageBox.innerText = 'Cargando artículos (0/100)'
+        messageBox.innerText = 'Cargando artículos (0/1000)'
         parentElement.appendChild(messageBox);
     }
 
@@ -195,7 +198,7 @@ const dateLinkeRemoverControlPanel = (() => {
 
     function updateLoadingMessage(number) {
         const messageBox = document.getElementById('messageBox');
-        messageBox.innerText = `Cargando artículos (${number}/100)`;
+        messageBox.innerText = `Cargando artículos (${number}/1000)`;
     }
 
     function loadProgressBar(parentElement) {
