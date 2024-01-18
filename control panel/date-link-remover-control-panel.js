@@ -75,7 +75,7 @@ const dateLinkeRemoverControlPanel = (() => {
 
     async function genArticleList() {
         let promises = [];
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 1000; i++) {
             promises.push(genArticle())
         }
         let result = await Promise.all(promises);
@@ -121,7 +121,7 @@ const dateLinkeRemoverControlPanel = (() => {
 
         articlesFound++;
         updateLoadingMessage(articlesFound);
-        barFill.style.width = `${articlesFound}%`;
+        barFill.style.width = `${articlesFound / 10}%`;
         return selectedArticle;
 
     }
