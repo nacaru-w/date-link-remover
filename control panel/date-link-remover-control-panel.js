@@ -125,25 +125,33 @@ const dateLinkeRemoverControlPanel = (() => {
         while (selectedArticle === null) {
             const result = await api.get(params);
             const article = result.query.random[0].title;
-            const content = await getContent(article);
 
-            const useRegex = regex.test(content);
-            const usePipeRegex = pipeRegex.test(content);
-            const useTemplateRegex = templateRegex.test(content);
-
-            const calendarArticle = titleRegex.test(article) || calendarCategories.some(e => content.includes(e)) || exceptions.some(e => article == e);
+            const calendarArticle = titleRegex.test(article) || exceptions.some(e => article == e);
 
             if (calendarArticle) {
                 console.log(article);
             }
 
-            if (!calendarArticle && (useRegex || usePipeRegex || useTemplateRegex)) {
-                selectedArticle = article;
-                articleDict[selectedArticle] = {
-                    regexEval: useRegex,
-                    pipeRegexEval: usePipeRegex,
-                    templateRegexEval: useTemplateRegex,
-                };
+            if (!calendarArticle) {
+                const content = await getContent(article);
+
+                const hasCalendarCategory = calendarCategories.some(e => content.includes(e));
+
+                if (!hasCalendarCategory) {
+
+                    const useRegex = regex.test(content);
+                    const usePipeRegex = pipeRegex.test(content);
+                    const useTemplateRegex = templateRegex.test(content);
+
+                    if (useRegex || usePipeRegex || useTemplateRegex) {
+                        selectedArticle = article;
+                        articleDict[selectedArticle] = {
+                            regexEval: useRegex,
+                            pipeRegexEval: usePipeRegex,
+                            templateRegexEval: useTemplateRegex,
+                        };
+                    }
+                }
             }
         }
 
