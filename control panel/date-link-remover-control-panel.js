@@ -55,7 +55,6 @@ const dateLinkeRemoverControlPanel = (() => {
         console.log('Dependencies have been loaded');
         await mw.loader.load('https://en.wikipedia.org/w/index.php?title=MediaWiki:Gadget-morebits.js&action=raw&ctype=text/javascript', 'text/javascript');
         await mw.loader.load('https://en.wikipedia.org/w/index.php?title=MediaWiki:Gadget-morebits.css&action=raw&ctype=text/css', 'text/css');
-
     }
 
     function getContent(pageName) {
@@ -103,7 +102,7 @@ const dateLinkeRemoverControlPanel = (() => {
 
     async function genArticleList() {
         let promises = [];
-        for (let i = 0; i < 3000; i++) {
+        for (let i = 0; i < 1000; i++) {
             promises.push(genArticle())
         }
         let result = await Promise.all(promises);
@@ -155,8 +154,8 @@ const dateLinkeRemoverControlPanel = (() => {
 
         articlesFound++;
         updateLoadingMessage(articlesFound);
-        if (articlesFound % 30 == 0) {
-            barFill.style.width = `${articlesFound / 30}%`;
+        if (articlesFound % 10 == 0) {
+            barFill.style.width = `${articlesFound / 10}%`;
         }
 
         return selectedArticle;
@@ -217,8 +216,8 @@ const dateLinkeRemoverControlPanel = (() => {
     function generateLoadingMessage(parentElement) {
         const messageBox = document.createElement('div');
         messageBox.id = 'messageBox';
-        messageBox.style = 'font-weight: bold; font-size: 1.2em; height: auto; width: auto; text-align: center;'
-        messageBox.innerText = 'Cargando artículos (0/3000)'
+        messageBox.style = 'font-weight: bold; font-size: 1.2em; height: auto; width: auto; text-align: center;';
+        messageBox.innerText = 'Cargando artículos (0/1000)';
         parentElement.appendChild(messageBox);
     }
 
@@ -232,7 +231,7 @@ const dateLinkeRemoverControlPanel = (() => {
 
     function updateLoadingMessage(number) {
         const messageBox = document.getElementById('messageBox');
-        messageBox.innerText = `Cargando artículos (${number}/3000)`;
+        messageBox.innerText = `Cargando artículos (${number}/1000)`;
     }
 
     function loadProgressBar(parentElement) {
