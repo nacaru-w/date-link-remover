@@ -51,9 +51,10 @@ const dateLinkRemover = (() => {
     }
 
     // Regexes variables
-    let regex = /\[\[\s*((?:(?:0?[1-9]|[12]\d|3[01])º?\sde\s)?(?:(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)(?:\sde\s[1-9]\d{0,3})?)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década de)\s)?(?:[1-9]\d{0,3}|siglo(?:\s|&nbsp;)*\w+|[IVXLCDM0-9]+º?\smilenio)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)\s*\]\]/i;
-    let pipeRegex = /\[\[\s*((?:(?:0?[1-9]|[12]\d|3[01])º?\sde\s)?(?:(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)(?:\sde\s[1-9]\d{0,3})?)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década de)\s)?(?:[1-9]\d{0,3}|siglo(?:\s|&nbsp;)*\w+|[IVXLCDM0-9]+º?\smilenio)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)(?:\s*\|([^\]]*))\s*\]\]/i;
-    let templateRegex = /(\{\{(?:siglo|(?:Julgreg)?fecha)[^\}]+)(?:\|1|\|Link\s*=\s*(?:\"true\"|(?:s[ií]|pt)))\s*(\}\})/i;
+let regex = /(?:(?:\[\[\s*)|(?:{{tc\|))((?:(?:0?[1-9]|[12]\d|3[01])º?\sde\s)?(?:(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|sep?tiembre|octubre|noviembre|diciembre)(?:\sde\s[1-9]\d{0,3})?)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década del?)\s)?(?:[1-9]\d{0,3}|los\s[1-9]0|(?:[1-2]\d{0,2}0s|[3-9]0s)|siglo(?:\s|&nbsp;)*\w+|[IVXLCDM0-9]+º?\smilenio)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)(?:(?:\s*\]\])|(?:}}))/i;
+let pipeRegex = /\[\[\s*((?:(?:0?[1-9]|[12]\d|3[01])º?\sde\s)?(?:(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|sep?tiembre|octubre|noviembre|diciembre)(?:\sde\s[1-9]\d{0,3})?)|(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:(?:años?|década del?)\s)?(?:[1-9]\d{0,3}|los\s[1-9]0|(?:[1-2]\d{0,2}0s|[3-9]0s)|siglo(?:\s|&nbsp;)*\w+|[IVXLCDM0-9]+º?\smilenio)(?:(?:\s|&nbsp;)*(?:a|d)\.(?:\s|&nbsp;)*C\.)?)(?:\s*\|([^\]]*))\s*\]\]/i;
+let templateRegex = /(\{\{\s*(?:siglo|(?:Julgreg)?fecha)[^\}]+)(?:\|\s*1\s*|\|\s*Link\s*=\s*(?:[\"\']?true[\"\']?\s*|(?:\s*s[ií]\s*|\s*pt\s*)))\s*(\}\})/i;
+
 
     function textReplacer(articleText, applyRegex, applyPipeRegex, applyTemplateRegex) {
         let newText = articleText;
